@@ -1,0 +1,84 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# .gitignore — Headless Bob Demo
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Secrets & credentials ─────────────────────────────────────────────────────
+.env
+*.key
+*.pem
+
+# ── Project conventions (AGENTS.md) ──────────────────────────────────────────
+AGENTS.md
+.bob/mcp.json
+
+# ── Underscore-prefixed folders (internal/private by convention) ─────────────
+_*/
+
+# ── Input / Output folder contents (keep folders, ignore contents) ────────────
+input/*
+!input/.gitkeep
+output/*
+!output/.gitkeep
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+.env/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+*.pyo
+
+# ── Node.js (in case the service is run locally alongside the demo) ───────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+
+# ── macOS ─────────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ── Runtime / process files ───────────────────────────────────────────────────
+.app.pid
+.app.log
+*.log
+
+# ── ML / binary model artefacts ──────────────────────────────────────────────
+*.onnx
+*.onnx.data
+*.so
+*.tgz
+*.tar.gz
+*.zip
+*.dylib
+
+# ── Playwright ────────────────────────────────────────────────────────────────
+.playwright-mcp/
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
