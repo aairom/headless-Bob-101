@@ -159,11 +159,17 @@ The service uses these exact status strings (verified against the live SSE strea
 
 ```mermaid
 stateDiagram-v2
-    [*] --> created: POST /messages enqueues run
-    created --> in-progress: Bob Shell subprocess starts
-    in-progress --> completed: Bob Shell exits successfully
-    in-progress --> failed: Bob Shell exits with error
-    in-progress --> cancelled: POST /runs/{id}/cancel
+    state "created" as created
+    state "in-progress" as in_progress
+    state "completed" as completed
+    state "failed" as failed
+    state "cancelled" as cancelled
+
+    [*] --> created : POST /messages enqueues run
+    created --> in_progress : Bob Shell subprocess starts
+    in_progress --> completed : Bob Shell exits successfully
+    in_progress --> failed : Bob Shell exits with error
+    in_progress --> cancelled : POST /runs/{id}/cancel
     completed --> [*]
     failed --> [*]
     cancelled --> [*]
