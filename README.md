@@ -148,28 +148,43 @@ headless-bob-demo/
 
 ## Prerequisites
 
-| Requirement | Notes |
+| Requirement | When needed |
 |---|---|
-| Python 3.11+ | Standard system Python or pyenv |
-| Node.js 22+ | Required to run the Headless Bob service |
-| IBM Bob Shell 2.0.4+ | Installed and on `PATH` — see [Installing Bob Shell](https://bob.ibm.com/docs/shell/getting-started/install-and-setup) |
-| IBM Bob API key | Inference-scope key from https://bob.ibm.com — Account → API Keys |
-| Headless Bob service | Running locally — see [Quick Start](#quick-start) below |
+| Python 3.11+ | Always — runs the Streamlit app |
+| Git | Always — to clone this repo |
+| Node.js 22+ | Only if you run the Headless Bob service locally |
+| IBM Bob Shell 2.0.4+ | Only if you run the Headless Bob service locally — see [Installing Bob Shell](https://bob.ibm.com/docs/shell/getting-started/install-and-setup) |
+| IBM Bob API key | Only if you run the Headless Bob service locally — Inference-scope key from https://bob.ibm.com → Account → API Keys |
+| Headless Bob service | A running instance — local, Docker, or remote. See [Connecting to the service](#connecting-to-the-service) below |
 
 ---
 
-## Quick Start
+## Connecting to the Service
 
-### 1. Clone and enter the project
+**You do not need to run the Headless Bob service locally.** The demo is a pure REST+SSE
+client — `HEADLESS_BOB_URL` in `.env` is the only coupling between this app and the service.
+Choose the deployment option that suits you:
 
-```bash
-git clone <your-repo-url>
-cd headless-bob-demo
+| Option | When to use |
+|---|---|
+| **A — Remote / shared instance** | Your team already runs the service on a server or cloud URL |
+| **B — Local install** | You want to run everything on your own machine (requires Node.js 22+ and Bob Shell) |
+| **C — Offline tests only** | You only need to develop or test the client code, no service required |
+
+### Option A — Remote or shared instance
+
+Set `HEADLESS_BOB_URL` to any reachable URL where the service is already running:
+
+```ini
+HEADLESS_BOB_URL=https://your-team-server.example.com
+HEADLESS_BOB_TOKEN=the-token-defined-on-that-server
 ```
 
-### 2. Start the Headless Bob service
+No Node.js, npm, or Bob Shell installation needed.
 
-Clone the Building Blocks repo and start the service:
+### Option B — Local install
+
+Clone and start the service from the IBM self-serve-assets repository:
 
 ```bash
 git clone https://github.com/ibm-self-serve-assets/building-blocks.git
@@ -186,13 +201,44 @@ npm run build && npm start
 > **Tip:** generate a strong bearer token with:
 > `python3 -c "import secrets; print(secrets.token_urlsafe(32))"`
 
+Then in the demo's `.env`:
+
+```ini
+HEADLESS_BOB_URL=http://127.0.0.1:8000
+HEADLESS_BOB_TOKEN=<same token as the value inside AUTH_TOKENS above>
+```
+
+### Option C — Offline tests only
+
+All 31 unit tests mock every HTTP call and require no running service or IBM credentials:
+
+```bash
+source .venv/bin/activate
+python -m pytest tests/ -v
+```
+
+---
+
+## Quick Start
+
+### 1. Clone and enter the project
+
+```bash
+git clone <your-repo-url>
+cd headless-bob-demo
+```
+
+### 2. Connect to the Headless Bob service
+
+See [Connecting to the service](#connecting-to-the-service) above and choose Option A, B, or C.
+
 ### 3. Configure the demo environment
 
 ```bash
 cp .env.example .env
-# Set these two values:
-#   HEADLESS_BOB_URL=http://127.0.0.1:8000
-#   HEADLESS_BOB_TOKEN=<same token as the value inside AUTH_TOKENS above>
+# Set these two values (skip if using Option C — tests only):
+#   HEADLESS_BOB_URL=<service URL — local or remote>
+#   HEADLESS_BOB_TOKEN=<bearer token matching the service's AUTH_TOKENS>
 ```
 
 ### 4. Create a virtual environment and install dependencies

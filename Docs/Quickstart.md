@@ -8,12 +8,13 @@ This guide gets you from zero to a running application in under 10 minutes.
 
 Ensure the following are available on your machine:
 
-| Tool | Version | Check |
+| Tool | Version | When needed |
 |---|---|---|
-| Python | 3.11+ | `python3 --version` |
-| npm | 18+ | `npm --version` |
-| IBM Bob Shell | 2.0.4+ | `bob --version` |
-| Git | any | `git --version` |
+| Python | 3.11+ | Always — runs the Streamlit app |
+| Git | any | Always — to clone this repo |
+| npm / Node.js | 22+ | Only for **Option B** (local service) |
+| IBM Bob Shell | 2.0.4+ | Only for **Option B** (local service) |
+| IBM Bob API key | — | Only for **Option B** (local service) |
 
 ### IBM Bob Shell installation
 
@@ -26,9 +27,31 @@ If Bob Shell is not installed:
 
 ---
 
-## Step 2: Start the Headless Bob Service
+## Step 2: Connect to the Headless Bob Service
 
-The demo connects to a Headless Bob service.  
+The demo connects to a Headless Bob service via `HEADLESS_BOB_URL`.
+**You do not need to run the service locally.** Choose the option that suits you:
+
+---
+
+### Option A — Use a shared or remote instance (no local setup)
+
+If your team already has a Headless Bob service running on a server, container, or cloud URL:
+
+```bash
+# In your .env, point to the remote instance:
+HEADLESS_BOB_URL=https://your-team-server.example.com
+HEADLESS_BOB_TOKEN=the-token-defined-on-that-server
+```
+
+Skip to [Step 3](#step-3-clone-and-configure-the-demo). No Node.js, npm, or Bob Shell required on your machine.
+
+---
+
+### Option B — Run the service locally (full local setup)
+
+Requires: Node.js 22+, IBM Bob Shell 2.0.4+, and an IBM Bob API key.
+
 Clone and start the service from the IBM self-serve-assets repository:
 
 ```bash
@@ -63,6 +86,19 @@ curl -s http://127.0.0.1:8000/api/v1/capabilities \
 ```
 
 You should see a JSON response with `version`, `bob_version`, and capacity info.
+
+---
+
+### Option C — Run tests only (fully offline, no service at all)
+
+All 31 unit tests mock every HTTP call and require no running service or credentials:
+
+```bash
+source .venv/bin/activate
+python -m pytest tests/ -v
+```
+
+Skip Steps 2 and 3 entirely.
 
 ---
 
@@ -152,11 +188,12 @@ All tests run offline (no live service needed).
 | Problem | Solution |
 |---|---|
 | "HEADLESS_BOB_TOKEN not set" | Check that `.env` exists and has `HEADLESS_BOB_TOKEN=...` |
-| "Not configured: Connection refused" | The Headless Bob service is not running — run `npm start` in the headlessbob directory |
+| "Not configured: Connection refused" | The Headless Bob service is not reachable — verify `HEADLESS_BOB_URL` in `.env` points to a running instance (local or remote) |
+| Want to skip running the service | Use Option A (remote instance) or Option C (offline tests only) — see Step 2 |
 | "HTTP Error 400: Bad Request" | Never pass extra fields to the message API — only `{"content":"..."}` is accepted. The demo handles this automatically; if you call the API directly, remove any `mode` or other fields |
-| "Service unreachable" | Verify the service is running: `curl -H "Authorization: Bearer <token>" http://127.0.0.1:8000/api/v1/capabilities` |
+| "Service unreachable" | Verify the service URL: `curl -H "Authorization: Bearer <token>" <HEADLESS_BOB_URL>/api/v1/capabilities` |
 | Port 8501 already in use | Edit `scripts/start.sh` and change `--server.port 8501` |
-| Bob returns an error | Check `BOB_API_KEY` in the Headless Bob service `.env` is valid |
+| Bob returns an error | Check `BOB_API_KEY` in the Headless Bob service `.env` is valid (Option B only) |
 | Tests fail | Make sure `.venv` is active and `pytest` is installed |
 
 ---
